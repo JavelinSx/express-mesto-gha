@@ -25,11 +25,11 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params._id)
+  User.findById(req.params.userId)
     .then((user) => res.status(OK).send({ data: user }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        return res.status(NOT_FOUND).send({ message: `Пользователь с _id:${req.params._id} не найден` });
+        return res.status(NOT_FOUND).send({ message: `Пользователь с _id:${req.params.userId} не найден` });
       }
       return res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` });
     });
