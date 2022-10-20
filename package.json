@@ -12,7 +12,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node --inspect app.js",
+    "dev": "nodemon --inspect app.js"
   },
   "repository": {
     "type": "git",
