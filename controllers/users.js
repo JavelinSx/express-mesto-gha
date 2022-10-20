@@ -11,23 +11,29 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(OK).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные пользователя.' });
       }
-      return res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' });
+      return res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.name}` });
     });
 };
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(OK).send({ data: users }))
-    .catch(() => res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' }));
+    .catch((err) => {
+      res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.name}` });
+    });
 };
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail()
     .then((user) => res.status(OK).send({ data: user }))
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные пользователя. Формат Id пользователя не верный' });
+      }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(NOT_FOUND).send({ message: `Пользователь с _id:${req.params.userId} не найден` });
       }

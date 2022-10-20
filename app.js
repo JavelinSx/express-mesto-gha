@@ -20,7 +20,8 @@ app.use((req, res, next) => {
   };
   next();
 });
-app.use(cardsRouter, userRouter);
+app.use('/cards', cardsRouter);
+app.use('/users', userRouter);
 
 app.use('*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'По указанному пути ничего не найдено' });

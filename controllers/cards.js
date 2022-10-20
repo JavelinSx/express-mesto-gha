@@ -11,9 +11,7 @@ module.exports.getCards = (req, res) => {
     .then((cards) => {
       res.status(OK).send({ cards });
     })
-    .catch((err) => {
-      res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` });
-    });
+    .catch(res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' }));
 };
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -23,51 +21,55 @@ module.exports.createCard = (req, res) => {
         .then((dataCard) => {
           res.status(OK).send(dataCard);
         })
-        .catch((err) => res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` }));
+        .catch(res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' }));
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные карточки. ${err.message}` });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные карточки.' });
       }
-      return res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` });
+      return res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' });
     });
 };
 module.exports.deleteCard = (req, res) => {
-  Card.findById(req.params.cardId)
+  Card.findById(req.params.idCard)
     .then((card) => card.remove().then(() => res.status(200).send(card)))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные карточки. ${err.message}` });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные карточки.' });
       }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(NOT_FOUND).send({ message: 'Не найдена карточка с указанным _id.' });
       }
-      return res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` });
+      return res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' });
     });
 };
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.idCard,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    {
+      runValidators: true,
+      new: true,
+    },
   )
+    .orFail({ message: 'Не найдена карточка с указанным _id.' })
     .populate(['owner', 'likes'])
-    .then((cards) => {
-      res.status(OK).send({ data: cards });
+    .then((card) => {
+      res.status(OK).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные карточки. ${err.message}` });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные карточки.' });
       }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(NOT_FOUND).send({ message: 'Не найдена карточка с указанным _id.' });
       }
-      return res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` });
+      return res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' });
     });
 };
 module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.idCard,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
@@ -77,11 +79,11 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные карточки. ${err.message}` });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные карточки.' });
       }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(NOT_FOUND).send({ message: 'Не найдена карточка с указанным _id.' });
       }
-      return res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.message}` });
+      return res.status(INTERNAL_SERVER).send({ message: 'Произошла ошибка на сервере.' });
     });
 };
