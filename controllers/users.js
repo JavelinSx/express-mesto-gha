@@ -51,11 +51,12 @@ module.exports.updateUserProfile = (req, res) => {
       runValidators: true,
     },
   )
+    .orFail()
     .then((user) => {
       res.status(OK).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные пользователя.' });
       }
       if (err.name === 'DocumentNotFoundError') {
