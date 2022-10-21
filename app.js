@@ -18,11 +18,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 5,
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests, please try again later.',
   statusCode: 429,
-  headers: true,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use(limiter);
 app.use(helmet());
