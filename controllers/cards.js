@@ -1,6 +1,5 @@
 const Card = require('../models/card');
 const {
-  OK,
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER,
@@ -17,7 +16,7 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.status(OK).send({ data: card });
+      res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -56,7 +55,7 @@ module.exports.likeCard = (req, res) => {
       if (card == null) {
         return res.status(NOT_FOUND).send({ message: 'Не найдена карточка с указанным _id.' });
       }
-      return res.status(OK).send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -77,7 +76,7 @@ module.exports.dislikeCard = (req, res) => {
       if (cards == null) {
         return res.status(NOT_FOUND).send({ message: 'Не найдена карточка с указанным _id.' });
       }
-      return res.status(OK).send({ data: cards });
+      return res.send({ data: cards });
     })
     .catch((err) => {
       if (err.name === 'CastError') {

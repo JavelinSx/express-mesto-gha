@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const {
-  OK,
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER,
@@ -9,7 +8,7 @@ const {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные пользователя.' });
@@ -20,7 +19,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(OK).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch((err) => {
       res.status(INTERNAL_SERVER).send({ message: `Произошла ошибка на сервере. ${err.name}` });
     });
@@ -29,7 +28,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .orFail()
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные пользователя. Формат Id пользователя не верный' });
@@ -53,7 +52,7 @@ module.exports.updateUserProfile = (req, res) => {
   )
     .orFail()
     .then((user) => {
-      res.status(OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -75,11 +74,12 @@ module.exports.updateMeAvatar = (req, res) => {
       runValidators: true,
     },
   )
+    .orFail()
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные пользователя.' });
       }
       if (err.name === 'DocumentNotFoundError') {
