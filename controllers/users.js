@@ -1,9 +1,31 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER,
 } = require('../utils/errors');
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        {
+          _id: user._id,
+        },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        {
+          expiresIn: '7d',
+        },
+      );
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
