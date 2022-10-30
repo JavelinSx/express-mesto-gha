@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
-const handlerErrors = require('./utils/errors');
+const handlerErrors = require('./middlewares/errors');
 const routes = require('./routes/routes');
 
 const { PORT = 3000 } = process.env;
@@ -15,7 +15,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: 'Too many requests, please try again later.',
-  statusCode: handlerErrors.MANY_REQUEST,
+  statusCode: 429,
   standardHeaders: true,
   legacyHeaders: false,
 });

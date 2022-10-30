@@ -14,7 +14,7 @@ const { NOT_FOUND } = require('../utils/errors');
 const app = express();
 
 app.post('/signup', celebrate({
-  body: Joi.object.keys({
+  body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     email: Joi.string().required().custom((value, helpers) => {
@@ -35,7 +35,7 @@ app.post('/signup', celebrate({
 }), createUser);
 
 app.post('/signin', celebrate({
-  body: Joi.object.keys({
+  body: Joi.object().keys({
     email: Joi.string().required().custom((value, helpers) => {
       if (validator.isEmail(value)) {
         return value;
