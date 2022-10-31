@@ -4,17 +4,16 @@ const BadAuthError = require('../errors/bad_auth');
 const { TOKEN_DEV } = require('../utils/const');
 
 module.exports.auth = (req, res, next) => {
-  const { token } = req.cookies;
-  const { authorization } = req.headers;
+  const { cookie } = req.headers;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (!cookie || !cookie.startsWith('token=')) {
     next(new BadAuthError('Необходима Авторизация'));
   }
-
+  const token = cookie.replace('token=', '');
   let payload;
 
   try {
-    payload = jwt.verify(token || authorization.replace('Bearer ', ''), NODE_ENV === 'production' ? JWT_SECRET : TOKEN_DEV);
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : TOKEN_DEV);
   } catch (err) {
     next(new BadAuthError('Необходима Авторизация'));
   }
