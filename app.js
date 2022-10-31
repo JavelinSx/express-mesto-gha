@@ -1,16 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const handlerErrors = require('./middlewares/errors');
-const routes = require('./routes/routes');
+const router = require('./routes/routes');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -19,9 +21,11 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
 app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 async function connected() {
   try {
@@ -38,7 +42,7 @@ async function connected() {
 
 app.use(limiter);
 app.use(helmet());
-app.use(routes);
+app.use('/', router);
 app.use(errors());
 app.use(handlerErrors);
 connected();

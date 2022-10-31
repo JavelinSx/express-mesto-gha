@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const BadAuthError = require('../errors/bad_auth');
 const { TOKEN_DEV } = require('../utils/const');
 
-module.exports.auth = (req, res, next) => {
+const auth = (req, res, next) => {
   const { token } = req.cookies;
 
   let playload;
@@ -15,3 +15,4 @@ module.exports.auth = (req, res, next) => {
     next(new BadAuthError('Необходима авторизация'));
   }
 };
+module.exports = { auth };
