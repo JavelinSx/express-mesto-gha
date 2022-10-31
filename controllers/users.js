@@ -21,7 +21,12 @@ module.exports.login = (req, res, next) => {
           expiresIn: '7d',
         },
       );
-      res.send({ token });
+      res
+        .cookie('token', token, {
+          maxAge: 3600000,
+          htpOnly: true,
+        })
+        .send({ message: 'Авторизация прошла успешно' });
     })
     .catch(() => {
       next(new BadAuthError('Неправильные почта или пароль.'));
@@ -59,15 +64,17 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.getUserInfo = (req, res, next) => {
+  User.findById(req.params.userId)
+    .orFail(new NotFoundError(`Пользователь с id ${req.params.userId} не найден`))
+    .then((user) => res.send(user))
+    .catch(next);
+};
+
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail()
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
-      }
-      return res.send({ data: user });
-    })
+    .orFail(new NotFoundError(`Пользователь с id ${req.params.userId} не найден`))
+    .then((user) => res.send({ data: user }))
     .catch((err) => next(err));
 };
 
@@ -81,16 +88,14 @@ module.exports.updateUserProfile = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail()
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
-      }
-      return res.send({ data: user });
-    })
+    .orFail(new NotFoundError(`Пользователь с id ${req.user._id} не найден`))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при обновлении пользователя'));
+      }
+      if (err.name === 'CastError') {
+        return next(new BadRequestError('Некорректный id пользователя'));
       }
       return next(err);
     });
@@ -105,13 +110,8 @@ module.exports.updateMeAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail()
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Пользователь по указанному _id не найден.'));
-      }
-      return res.send({ data: user });
-    })
+    .orFail(new NotFoundError(`Пользователь с id ${req.user._id} не найден`))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при обновлении пользователя'));

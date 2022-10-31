@@ -1,6 +1,5 @@
-const express = require('express');
-const { celebrate, Joi } = require('celebrate');
-const validator = require('validator');
+const router = require('express').Router();
+const { celebrate } = require('celebrate');
 const userRouter = require('./users');
 const cardRouter = require('./cards');
 const {
@@ -8,50 +7,18 @@ const {
   login,
 } = require('../controllers/users');
 const auth = require('../middlewares/auth');
-const { LINK_REGEX } = require('../utils/const');
-const { NOT_FOUND } = require('../utils/errors');
+const { validUnlogUser } = require('../utils/userShema');
+const NotFoundError = require('../errors/not_found_error');
 
-const app = express();
+router.post('/signup', celebrate(validUnlogUser), createUser);
+router.post('/signin', celebrate(validUnlogUser), login);
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    email: Joi.string().required().custom((value, helpers) => {
-      if (validator.isEmail(value)) {
-        return value;
-      }
-      return helpers.message('Неккоректный email');
-    }),
-    password: Joi.string().required(),
-    avatar: Joi.string().custom((value, helpers) => {
-      if (LINK_REGEX.test(value)) {
-        return value;
-      }
-      return helpers.message('Неккоректная ссылка');
-    }),
-  }),
+router.use(auth);
+router.use(userRouter);
+router.use(cardRouter);
 
-}), createUser);
-
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().custom((value, helpers) => {
-      if (validator.isEmail(value)) {
-        return value;
-      }
-      return helpers.message('Неккоректный email');
-    }),
-    password: Joi.string().required(),
-  }),
-}), login);
-
-app.use(auth);
-app.use(userRouter);
-app.use(cardRouter);
-
-app.use('*', (req, res) => {
-  res.status(NOT_FOUND).send({ message: 'По указанному пути ничего не найдено' });
+router.use('*', (req, res, next) => {
+  next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
 
-module.exports = app;
+module.exports = router;
