@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const BadRequestError = require('../errors/bad_request');
 const NotFoundError = require('../errors/not_found_error');
-const DeleteCardError = require('../errors/delete_card_error');
+const BadAuthError = require('../errors/bad_auth');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -27,16 +27,16 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.idCard)
     .then((cards) => {
       if (!cards) {
-        throw new NotFoundError('Карточка с указанным _id не найдена.');
+        throw new BadAuthError('Карточка с указанным _id не найдена.');
       } else if (!cards.owner.equals(req.user._id)) {
-        throw new DeleteCardError('Попытка удалить чужую карточку.');
+        throw new BadAuthError('Попытка удалить чужую карточку.');
       } else {
         return cards.remove().then(() => res.status(200).send(cards));
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные при удалении карточки.'));
+        return next(new BadAuthError('Переданы некорректные данные при удалении карточки.'));
       }
       return next;
     });
