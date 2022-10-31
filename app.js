@@ -26,7 +26,6 @@ app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 async function connected() {
   try {
     mongoose.connect('mongodb://localhost:27017/mestodb', {

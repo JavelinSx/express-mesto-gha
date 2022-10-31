@@ -2,7 +2,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { SECRET_KEY_DEV } = require('../utils/const');
+const { TOKEN_DEV } = require('../utils/const');
 const BadRequestError = require('../errors/bad_request');
 const NotFoundError = require('../errors/not_found_error');
 const BadAuthError = require('../errors/bad_auth');
@@ -16,7 +16,7 @@ module.exports.login = (req, res, next) => {
         {
           _id: user._id,
         },
-        NODE_ENV === 'production' ? JWT_SECRET : SECRET_KEY_DEV,
+        NODE_ENV === 'production' ? JWT_SECRET : TOKEN_DEV,
         {
           expiresIn: '7d',
         },
@@ -24,9 +24,10 @@ module.exports.login = (req, res, next) => {
       res
         .cookie('token', token, {
           maxAge: 3600000,
-          htpOnly: true,
+          httpOnly: true,
         })
-        .send({ message: 'Авторизация прошла успешно' });
+        .send({ message: 'Авторизация прошла успешно' })
+        .end();
     })
     .catch(() => {
       next(new BadAuthError('Неправильные почта или пароль.'));
