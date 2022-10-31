@@ -13,13 +13,9 @@ module.exports.login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
-        {
-          _id: user._id,
-        },
+        { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : TOKEN_DEV,
-        {
-          expiresIn: '7d',
-        },
+        { expiresIn: '7d' },
       );
       res
         .cookie('token', token, {
@@ -39,7 +35,7 @@ module.exports.createUser = (req, res, next) => {
   if (!email || !password) {
     return res.status(BadRequestError).send({ message: 'Поля email и password обязательны' });
   }
-  return bcrypt.hash(req.body.password, 10)
+  return bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email: req.body.email, password: hash,
     }))
@@ -66,15 +62,17 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.params.userId)
-    .orFail(new NotFoundError(`Пользователь с id ${req.params.userId} не найден`))
+  const { _id } = req.user;
+  User.findById(_id)
+    .orFail(new NotFoundError(`Пользователь с id ${_id} не найден`))
     .then((user) => res.send(user))
     .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.userId)
-    .orFail(new NotFoundError(`Пользователь с id ${req.params.userId} не найден`))
+  const { _id } = req.user;
+  User.findById(_id)
+    .orFail(new NotFoundError(`Пользователь с id ${_id} не найден`))
     .then((user) => res.send({ data: user }))
     .catch((err) => next(err));
 };

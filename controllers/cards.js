@@ -24,8 +24,8 @@ module.exports.createCard = (req, res, next) => {
     });
 };
 module.exports.deleteCard = (req, res, next) => {
-  Card.findById(req.params.idCard)
-    .orFail(new NotFoundError(`Карточка с id ${req.params.idCard} не найдена`))
+  Card.findById(req.user._id)
+    .orFail(new NotFoundError(`Карточка с id ${req.user._id} не найдена`))
     .then((cards) => {
       if (!cards.owner.equals(req.user._id)) {
         throw new ForbiddenError('Попытка удалить чужую карточку.');
@@ -42,7 +42,7 @@ module.exports.deleteCard = (req, res, next) => {
 };
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.idCard,
+    req.req.user._id,
     { $addToSet: { likes: req.user._id } },
     {
       new: true,
@@ -59,7 +59,7 @@ module.exports.likeCard = (req, res, next) => {
 };
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.idCard,
+    req.req.user._id,
     { $pull: { likes: req.user._id } },
     {
       new: true,
