@@ -15,7 +15,7 @@
     "validator": "^13.7.0"
   },
   "name": "express-mesto-gha",
-  "description": "[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml)\r # Проект Mesto фронтенд + бэкенд",
+  "description": "Создание backend-arhitect REST API с использованием: MongooDB, mongoose, react, express, jwt, hash, basic defend(XSS, CSRF)",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "url": "git+https://github.com/JavelinSx/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "JavleinSX",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/JavelinSx/express-mesto-gha/issues"

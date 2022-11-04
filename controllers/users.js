@@ -31,15 +31,12 @@ module.exports.login = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-  if (!email || !password) {
-    return res.status(BadRequestError).send({ message: 'Поля email и password обязательны' });
-  }
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email: req.body.email, password: hash,
+      name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(200).send({
+      res.send({
         name: user.name, about: user.about, avatar: user.avatar, email: user.email, _id: user._id,
       });
     })

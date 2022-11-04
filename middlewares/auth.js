@@ -4,11 +4,7 @@ const BadAuthError = require('../errors/bad_auth');
 const { TOKEN_DEV } = require('../utils/const');
 
 module.exports.auth = (req, res, next) => {
-  const { cookie } = req.headers;
-  if (!cookie || !cookie.startsWith('token=')) {
-    next(new BadAuthError('Необходима Авторизация'));
-  }
-  const token = cookie.replace('token=', '');
+  const { token } = req.cookies;
   let payload;
 
   try {

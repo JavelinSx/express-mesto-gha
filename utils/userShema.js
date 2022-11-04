@@ -2,7 +2,7 @@ const { Joi } = require('celebrate');
 
 const { LINK_REGEX } = require('./const');
 
-const validUnlogUser = {
+const validateRegisterUser = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -11,8 +11,14 @@ const validUnlogUser = {
     avatar: Joi.string().regex(LINK_REGEX),
   }),
 };
+const validateLoginUser = {
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+};
 
-const validLogUser = {
+const validateAuthUser = {
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -24,6 +30,7 @@ const validLogUser = {
 };
 
 module.exports = {
-  validUnlogUser,
-  validLogUser,
+  validateRegisterUser,
+  validateLoginUser,
+  validateAuthUser,
 };
