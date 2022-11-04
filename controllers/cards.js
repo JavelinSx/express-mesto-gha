@@ -42,7 +42,6 @@ module.exports.deleteCard = (req, res, next) => {
     });
 };
 module.exports.likeCard = (req, res, next) => {
-  console.log(req);
   const { idCard } = req.params;
   Card.findByIdAndUpdate(
     idCard,
@@ -58,8 +57,7 @@ module.exports.likeCard = (req, res, next) => {
         return next(new BadRequestError('Переданы некорректные данные для изменения лайка.'));
       }
       return next(err);
-    })
-    .catch(() => { console.log(req); });
+    });
 };
 module.exports.dislikeCard = (req, res, next) => {
   const { idCard } = req.params;

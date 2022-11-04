@@ -4,7 +4,7 @@ const { LINK_REGEX } = require('./const');
 
 const validGetCard = {
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).hex(),
+    idCard: Joi.string().length(24).hex(),
   }),
 };
 
