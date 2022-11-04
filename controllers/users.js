@@ -60,12 +60,20 @@ module.exports.getUsers = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+module.exports.getUserInfo = (req, res, next) => {
+  const userId = req.user._id;
+  User.findById(userId)
+    .orFail(new NotFoundError(`Пользователь с id ${userId} не найден`))
+    .then((user) => res.send(user))
+    .catch(next);
+};
+
 module.exports.getUser = (req, res, next) => {
-  const { _id } = req.user;
-  User.findById(_id)
-    .orFail(new NotFoundError(`Пользователь с id ${req.body} не найден1`))
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail(new NotFoundError(`Пользователь с id ${userId} не найден`))
     .then((user) => res.send({ data: user }))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.updateUserProfile = (req, res, next) => {

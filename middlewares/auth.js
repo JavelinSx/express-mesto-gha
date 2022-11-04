@@ -5,7 +5,6 @@ const { TOKEN_DEV } = require('../utils/const');
 
 module.exports.auth = (req, res, next) => {
   const { cookie } = req.headers;
-
   if (!cookie || !cookie.startsWith('token=')) {
     next(new BadAuthError('Необходима Авторизация'));
   }
