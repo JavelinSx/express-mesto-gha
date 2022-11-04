@@ -22,8 +22,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
         })
-        .send({ message: 'Авторизация прошла успешно' })
-        .end();
+        .send({ message: 'Авторизация прошла успешно' });
     })
     .catch(() => {
       next(new BadAuthError('Неправильные почта или пароль.'));
@@ -58,21 +57,15 @@ module.exports.createUser = (req, res, next) => {
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
-};
-
-module.exports.getUserInfo = (req, res, next) => {
-  const { _id } = req.user;
-  User.findById(_id)
-    .orFail(new NotFoundError(`Пользователь с id ${_id} не найден`))
-    .then((user) => res.send(user))
-    .catch(next);
+    .catch((err) => next(err));
 };
 
 module.exports.getUser = (req, res, next) => {
-  const { _id } = req.user;
-  User.findById(_id)
-    .orFail(new NotFoundError(`Пользователь с id ${_id} не найден`))
+  console.log(req.body);
+  console.log(req.params);
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail(new NotFoundError(`Пользователь с id ${userId} не найден`))
     .then((user) => res.send({ data: user }))
     .catch((err) => next(err));
 };
