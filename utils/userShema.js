@@ -11,6 +11,7 @@ const validateRegisterUser = {
     avatar: Joi.string().regex(LINK_REGEX),
   }),
 };
+
 const validateLoginUser = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),

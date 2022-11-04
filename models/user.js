@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const BadAuthError = require('../errors/bad_auth');
+const { LINK_REGEX } = require('../utils/const');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -19,12 +20,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: (value) => {
-      if (validator.isUrl(value)) {
-        return true;
-      }
-      return false;
-    },
+    validate: (value) => LINK_REGEX.test(value),
   },
   email: {
     type: String,
@@ -40,7 +36,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false,
+    select: true,
   },
 });
 
