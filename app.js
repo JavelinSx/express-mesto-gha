@@ -8,6 +8,9 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const handlerErrors = require('./middlewares/errors');
 const router = require('./routes/routes');
+const cors = require('./middlewares/cors');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { logger } = require('express-winston');
 
 const { PORT = 3000 } = process.env;
 
@@ -23,6 +26,8 @@ const limiter = rateLimit({
 });
 
 app.disable('x-powered-by');
+app.use(requestLogger);
+app.use(cors);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
