@@ -10,7 +10,6 @@ const handlerErrors = require('./middlewares/errors');
 const router = require('./routes/routes');
 const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { logger } = require('express-winston');
 
 const { PORT = 3000 } = process.env;
 
@@ -47,6 +46,9 @@ async function connected() {
 app.use(limiter);
 app.use(helmet());
 app.use('/', router);
+
+app.use(errorLogger);
 app.use(errors());
 app.use(handlerErrors);
+
 connected();
