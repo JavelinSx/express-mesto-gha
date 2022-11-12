@@ -6,6 +6,8 @@ const allowedCors = [
   'https://localhost:3000',
   'http://javelin.nomoredomains.icu',
   'https://javelin.nomoredomains.icu',
+  'http://api.javelin.nomoredomains.icu',
+  'https://api.javelin.nomoredomains.icu',
 ];
 
 module.exports = (req, res, next) => {
