@@ -3,9 +3,9 @@ const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 const allowedCors = [
   'localhost:3000',
   'http://localhost:3000',
-  'javelin.nomoredomains.work',
-  'http://javelin.nomoredomains.work',
-  'https://javelin.nomoredomains.work',
+  'https://localhost:3000',
+  'http://javelin.nomoredomains.icu',
+  'https://javelin.nomoredomains.icu',
 ];
 
 module.exports = (req, res, next) => {
